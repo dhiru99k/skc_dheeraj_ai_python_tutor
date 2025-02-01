@@ -29,7 +29,7 @@ const ChatWindow = () => {
     try {
       // Send user input to Vercel API
       const response = await axios.post(
-        "https://ai-python-tutor.vercel.app/generate",
+        "https://ai-python-tutor-api.vercel.app/",
         { input },
         { headers: { "Content-Type": "application/json" } }
       );
