@@ -3,19 +3,20 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { materialLight } from "react-syntax-highlighter/dist/esm/styles/prism";
-import { FaBars, FaTimes } from "react-icons/fa";
 
 const ChatWindow = () => {
-  const [messages, setMessages] = useState([]);
-  const [input, setInput] = useState("");
-  const [isTyping, setIsTyping] = useState(false);
-  const chatEndRef = useRef(null);
+  const [messages, setMessages] = useState([]);  // Stores chat messages
+  const [input, setInput] = useState("");        // Stores user input
+  const [isTyping, setIsTyping] = useState(false);  // Loading state for AI response
+  const chatEndRef = useRef(null);               // Reference for auto-scrolling
   const navigate = useNavigate();
 
+  // Auto-scroll to the latest message
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isTyping]);
 
+  // Function to send message to Vercel API
   const sendMessage = async () => {
     if (!input.trim()) return;
 
@@ -25,50 +26,41 @@ const ChatWindow = () => {
     setInput("");
     setIsTyping(true);
 
-    const apiKey = localStorage.getItem("geminiApiKey");
-
-    if (!apiKey) {
-      alert("API key not found. Please set your API key.");
-      setIsTyping(false);
-      return;
-    }
-
     try {
+      // Send user input to Vercel API
       const response = await axios.post(
-        `https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key=${apiKey}`,
-        { contents: [{ parts: [{ text: input }] }] },
+        "https://ai-python-tutor.vercel.app/generate",
+        { input },
         { headers: { "Content-Type": "application/json" } }
       );
 
-      const aiText = response.data.candidates[0]?.content?.parts[0]?.text || "⚠️ No response from AI";
+      // Extract AI response
+      const aiText = response.data.response || "⚠️ No response from AI";
       const isCodeResponse = aiText.includes("```");
 
-      const finalMessages = [
-        ...newMessages,
-        { role: "assistant", content: aiText, isCode: isCodeResponse },
-      ];
-      setMessages(finalMessages);
+      // Append AI response to chat messages
+      setMessages([...newMessages, { role: "assistant", content: aiText, isCode: isCodeResponse }]);
     } catch (error) {
       console.error("Error fetching AI response:", error);
-      alert("⚠️ Error fetching AI response. Check your API key.");
+      alert("⚠️ Error fetching AI response. Check your API setup.");
     } finally {
       setIsTyping(false);
     }
   };
 
+  // Function to start a new chat session
   const startNewChat = () => {
     setMessages([]);
   };
 
   return (
     <div className="flex h-screen w-full bg-gray-900 text-white">
-      {/* Main Chat Window */}
+      {/* Chat Window */}
       <div className="flex flex-col flex-grow">
+        
         {/* Header */}
         <div className="flex justify-between items-center p-4 bg-gray-800 shadow-lg">
-          <div className="flex items-center gap-4">
-            <h2 className="text-2xl font-bold">💬 AI Python Tutor</h2>
-          </div>
+          <h2 className="text-2xl font-bold">💬 AI Python Tutor</h2>
           <div className="flex gap-4">
             <button
               onClick={startNewChat}
