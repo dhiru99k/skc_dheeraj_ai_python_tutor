@@ -30,6 +30,6 @@ An AI-powered Python tutor designed for children to learn basic Python coding in
 #### The AI will respond with text or formatted Python code.
 
 # 📩 Contact
-## 📧 Email: dk5333341@gmail.com
+### 📧 Email: dk5333341@gmail.com
 
-## 🔗 Live Demo: https://dhiru99k.github.io/skc_dheeraj_ai_python_tutor/
+### 🔗 Live Demo: https://dhiru99k.github.io/skc_dheeraj_ai_python_tutor/
